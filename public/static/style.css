@@ -58,7 +58,8 @@ body{
     border-radius: 5px;
 }
 
-#loginPage label{
+#loginPage p{
+    font-size:12px;
     color: #333;
 }
 #loginPage button{
@@ -76,6 +77,7 @@ body{
 @media screen and (max-width: 600px) {
     #loginForm{
         width: 80%;
+        height: 80%;
     }
     
 }
