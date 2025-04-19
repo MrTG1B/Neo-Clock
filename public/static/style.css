@@ -44,11 +44,34 @@ body{
 }
 
 #loginForm h1{
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     color: #333;
-    font-size: 50px;
-    font-weight: bold;
+    /* font-size: 50px; */
+    /* font-weight: bold; */
 }
+
+#loginPage input{
+    margin: 10px;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#loginPage label{
+    color: #333;
+}
+#loginPage button{
+    margin: 10px;
+    padding: 10px;
+    width: 100%;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 
 @media screen and (max-width: 600px) {
     #loginForm{
