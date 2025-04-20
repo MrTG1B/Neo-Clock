@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Expected Age of Death must be a number');
             return;
         }
-        else if (isNaN(dob)) {
-            alert('Date of Birth must be a date');
-            return;
-        }
+        // else if (isNaN(dob)) {
+        //     alert('Date of Birth must be a date');
+        //     return;
+        // }
         const data = { firstName, lastName, dob, eAgeofDeath };
         localStorage.setItem('loginState', 'true');
         localStorage.setItem('userData', JSON.stringify(data));
