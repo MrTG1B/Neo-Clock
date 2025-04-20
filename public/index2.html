@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Time Wheel Circular</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0a0f18;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+
+    .circle {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 600px; height: 600px;
+      transform: translate(-50%, -50%);
+    }
+
+    .ring {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .item {
+      position: absolute;
+      transform-origin: center center;
+      font-size: 11px;
+      color: #525151;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Highlight bar pointing to current value */
+    .highlight-bar {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 350px;
+      height: 28px;
+      background: #005f94;
+      border-radius: 8px;
+      transform-origin: left center;
+      transform: translateY(-50%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .center-display {
+      position: absolute;
+      top: 90%; left: 50%;
+      transform: translateX(-50%);
+      background-color: #1e1e2f;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 16px;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    #centerCircle{
+      background: #005f94;
+      border-radius:50%;
+      display:flex;
+      justify-content:center;
+      align-content:center;
+      align-items:center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width:40px;
+      height:40px;
+      transform: translate(-50%,-50%);
+    }
+
+    #userInitials{
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+    }
+
+    .item.active {
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        text-shadow: 0 0 5px rgba(255,255,255,0.7);
+        padding-left: 30px;
+      }
+
+
+  </style>
+</head>
+<body>
+
+  <div class="circle" id="circle"></div>
+  <div id="centerCircle">
+    <span id="userInitials">TD</span>
+  </div>
+  <div class="highlight-bar"></div>
+  <div class="center-display" id="countdown">Loading...</div>
+
+  <script>
+    const circle = document.getElementById('circle');
+
+    const days     = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    const months   = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const dates    = Array.from({length:31},(_,i)=>i+1);
+    const hours    = Array.from({length:24},(_,i)=>String(i).padStart(2,'0'));
+    const minutes  = Array.from({length:60},(_,i)=>String(i).padStart(2,'0'));
+    const seconds  = Array.from({length:60},(_,i)=>String(i).padStart(2,'0'));
+    const years    = Array.from({length:36},(_,i)=>2025+i);
+
+    const ringsData = [
+      { items: days,    radius: 50 },
+      { items: months,  radius: 100 },
+      { items: dates,   radius: 140 },
+      { items: hours,   radius: 180 },
+      { items: minutes, radius: 220 },
+      { items: seconds, radius: 260 },
+      { items: years,   radius: 300 }
+    ];
+
+    // Create all rings
+    const ringRefs = ringsData.map(({items,radius}) => {
+      const ring = document.createElement('div');
+      ring.className = 'ring';
+      items.forEach((val,i) => {
+        const angle = (360/items.length)*i - 90;
+        const x = Math.cos(angle*Math.PI/180)*radius;
+        const y = Math.sin(angle*Math.PI/180)*radius;
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.style.left = `${300+x}px`;
+        el.style.top  = `${300+y}px`;
+        el.style.transform = `translate(-50%,-50%) rotate(${angle}deg)`;
+        el.textContent = val;
+        ring.appendChild(el);
+      });
+      circle.appendChild(ring);
+      return { ring, items };
+    });
+
+    const countdown = document.getElementById('countdown');
+    const target = new Date('March 7, 2030 15:54:45').getTime();
+
+    let lastValues = Array(ringRefs.length).fill(null);
+
+    function update() {
+      const now = new Date();
+      // Current values for each ring
+      const curr = [
+        days[now.getDay()?now.getDay()-1:6],
+        months[now.getMonth()],
+        now.getDate(),
+        String(now.getHours()).padStart(2,'0'),
+        String(now.getMinutes()).padStart(2,'0'),
+        String(now.getSeconds()).padStart(2,'0'),
+        now.getFullYear()
+      ];
+
+      // Rotate only rings with changed value
+      curr.forEach((val, i) => {
+        if (val === lastValues[i]) return;
+      
+        const { ring, items } = ringRefs[i];
+        const idx = items.indexOf(val);
+        const angle = -(360 / items.length) * idx + 90;
+        ring.style.transform = `rotate(${angle}deg)`;
+        ring.style.transition = 'transform 0.5s ease-in-out';
+        lastValues[i] = val;
+      
+        // Remove 'active' class from all items in this ring
+        ring.querySelectorAll('.item').forEach(el => el.classList.remove('active'));
+      
+        // Add 'active' class to the current item
+        const currentItem = ring.children[idx];
+        if (currentItem) currentItem.classList.add('active');
+      });
+      
+
+      // Update countdown and timestamp
+      const diff = target - now.getTime();
+      const y = Math.floor(diff/(1000*60*60*24*365));
+      const d = Math.floor((diff%(1000*60*60*24*365))/(1000*60*60*24));
+      const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+      const m = Math.floor((diff%(1000*60*60))/(1000*60));
+      const s = Math.floor((diff%(1000*60))/1000);
+      countdown.textContent = `Time left: ${y}y ${d}d ${h}h ${m}m ${s}s`;
+    }
+
+    setInterval(update,1000);
+    update();
+  </script>
+</body>
+</html>

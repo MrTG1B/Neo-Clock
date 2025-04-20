@@ -32,7 +32,10 @@
         <div id="loginPage" style="display: flex;">
             <div id="loginForm" >
                 <h1>Neo Clock</h1>
-                <input type="text" id="username" placeholder="Username">
+                <div style="display: flex; flex-direction: row; justify-content: space-between;align-items: center; align-content: center;width: 100%;">
+                    <input type="text" id="firstName" placeholder="First Name">
+                    <input type="text" id="lastName" placeholder="Last Name">
+                </div>
                 <div style="display: flex; flex-direction: row; justify-content: space-between;align-items: center; align-content: center;width: 100%;">
                     <p for="dob">Date of Birth</p>
                     <input type="date" id="dob" placeholder="Date of Birth">
@@ -42,8 +45,15 @@
             </div>
         </div>
 
-        <div id="clockPage" style="display: none;">
-            <h1 id="clock"></h1>
+        <div id="clockPage" class ="container" style="display: none;">
+            <div class="circle" id="circle"></div>
+            <div id="centerCircle">
+                <span id="userInitials">--</span>
+            </div>
+            <div class="highlight-bar"></div>
+            <div class="timeLeft" id="timeLeft">Loading...</div>
+            <div class="timeUsed" id="timeUsed">Loading...</div>
+            <button id="logoutButton"></button>
         </div>
     </div>
 </body>
